@@ -28,7 +28,6 @@ A full-stack application for managing arbitrary JSON configuration data with a R
 
 3. Access the application:
     - **Frontend UI**: http://localhost:5173
-    - **Backend API**: http://localhost:3001
 
 ## Features
 
