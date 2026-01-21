@@ -17,7 +17,7 @@ A full-stack application for managing arbitrary JSON configuration data with a R
 
 1. Clone the repository:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/2426-BingXianXie/Setting-Management.git
    cd settings-management
    ```
 
