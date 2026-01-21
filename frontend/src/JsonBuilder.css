@@ -1,0 +1,190 @@
+.json-builder {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 14px;
+}
+
+.json-bracket {
+    color: #d4a017;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0.25rem 0;
+}
+
+.json-fields {
+    padding: 0.5rem 0;
+}
+
+.json-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0.35rem 0;
+    flex-wrap: wrap;
+}
+
+.json-indent {
+    width: 24px;
+    display: inline-block;
+}
+
+.json-quote {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.json-colon {
+    color: #333;
+    margin: 0 4px;
+    font-weight: bold;
+}
+
+.json-comma {
+    color: #333;
+    min-width: 8px;
+}
+
+/* Input fields */
+.json-key-input {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    color: #2980b9;
+    padding: 0.35rem 0.5rem;
+    font-family: inherit;
+    font-size: inherit;
+    width: 120px;
+    transition: all 0.2s;
+}
+
+.json-key-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.json-value-input {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    color: #c0392b;
+    padding: 0.35rem 0.5rem;
+    font-family: inherit;
+    font-size: inherit;
+    width: 180px;
+    transition: all 0.2s;
+}
+
+.json-value-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.json-value-input.json-number {
+    color: #27ae60;
+    width: 100px;
+}
+
+.json-value-input.json-object {
+    color: #8e44ad;
+    width: 250px;
+}
+
+/* Type selector */
+.json-type-select {
+    background: #ecf0f1;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    color: #555;
+    padding: 0.3rem 0.4rem;
+    font-size: 11px;
+    cursor: pointer;
+    margin-right: 6px;
+}
+
+.json-type-select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Boolean selector */
+.json-bool-select {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    color: #e67e22;
+    padding: 0.35rem 0.5rem;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+.json-bool-select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Remove button */
+.json-remove-btn {
+    background: transparent;
+    border: none;
+    color: #bbb;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    margin-left: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.json-remove-btn:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Add button */
+.json-add-btn {
+    background: #e8f5e9;
+    border: 2px dashed #81c784;
+    border-radius: 4px;
+    color: #2e7d32;
+    padding: 0.5rem 1rem;
+    margin-top: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.json-add-btn:hover {
+    background: #c8e6c9;
+    border-color: #66bb6a;
+}
+
+/* Placeholder styling */
+.json-key-input::placeholder,
+.json-value-input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Error styling */
+.input-error {
+    border-color: #e74c3c !important;
+    background: #fdf2f2 !important;
+}
+
+.field-error {
+    color: #e74c3c;
+    font-size: 11px;
+    margin-left: 8px;
+    background: #fdf2f2;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #f5c6cb;
+}

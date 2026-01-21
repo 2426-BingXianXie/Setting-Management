@@ -67,7 +67,7 @@ The Visual Editor validates input in real-time:
 
 The `GET /settings` endpoint supports pagination:
 - `page`: Page number (default: 1)
-- `limit`: Items per page (default: 10)
+- `limit`: Items per page (default: 5)
 
 Example: `GET /settings?page=2&limit=5`
 
@@ -112,7 +112,7 @@ curl -X DELETE http://localhost:3001/settings/<id>
 ### Pagination: Page-based (Limit/Offset)
 - Simple limit/offset pagination
 - Returns total count and total pages for UI navigation
-- Default: 10 items per page
+- Default: 5 items per page
 
 ### API Design
 - RESTful conventions followed
@@ -156,7 +156,7 @@ Note: When running locally without Docker, update the Vite proxy target in `vite
 ```javascript
 proxy: {
   '/settings': {
-    target: 'http://localhost:3001',  // Change from 'http://backend:3001'
+    target: 'http://localhost:3001',
     changeOrigin: true
   }
 }
