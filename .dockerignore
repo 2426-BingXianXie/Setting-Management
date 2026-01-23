@@ -1,0 +1,25 @@
+# Dependencies - must be installed fresh in container
+node_modules/
+*/node_modules/
+
+# Git
+.git/
+.gitignore
+
+# Database files
+*.db
+data/
+
+# IDE
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test coverage
+coverage/
