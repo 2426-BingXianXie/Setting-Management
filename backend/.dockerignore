@@ -1,6 +1,6 @@
 # Exclude node_modules to prevent architecture mismatch
 node_modules/
-*/node_modules/
+node_modules/
 
 # Git files
 .git/
