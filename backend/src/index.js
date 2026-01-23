@@ -97,17 +97,21 @@ app.post('/settings', (req, res) => {
  * Returns a paginated list of all settings objects.
  * Ordered by creation date (newest first).
  *
- * @query {number} page - Page number (default: 1)
- * @query {number} limit - Items per page (default: 10)
+ * @query {number} page - Page number (default: 1, minimum: 1)
+ * @query {number} limit - Items per page (default: 5, minimum: 1)
  * @returns {200} Object containing data array and pagination info
  * @returns {500} Server error if fetch fails
  */
 app.get('/settings', (req, res) => {
   try {
     // Parse pagination parameters with defaults
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    // Calculate offset for SQL query
+    let page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 5;
+
+    // Ensure page and limit are at least 1
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 1;
+
     const offset = (page - 1) * limit;
 
     // Get total count for pagination metadata
@@ -127,7 +131,7 @@ app.get('/settings', (req, res) => {
                  page,
                  limit,
                  total,
-                 totalPages: Math.ceil(total / limit)
+                 totalPages: Math.ceil(total / limit) || 1
                }
              });
   } catch (error) {

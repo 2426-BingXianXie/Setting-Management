@@ -6,6 +6,7 @@ A full-stack application for managing arbitrary JSON configuration data with a R
 
 - **Backend**: Node.js, Express, SQLite (better-sqlite3)
 - **Frontend**: React 18 with Vite
+- **Testing**: Vitest, Supertest, React Testing Library
 - **Deployment**: Docker & Docker Compose
 
 ## Quick Start
@@ -27,13 +28,14 @@ A full-stack application for managing arbitrary JSON configuration data with a R
    ```
 
 3. Access the application:
-    - **Frontend UI**: http://localhost:5173
+    - **Open in browser**: http://localhost:5173
+
 
 ## Features
 
 ### Frontend UI
 
-- **Search by ID**: Search for a specific settings object by its UUID. Displays HTTP 404 error if not found.
+- **Search by ID**: Search for a specific settings object by its UUID. Displays HTTP 404 error if not found. Validates UUID format before searching.
 - **Visual JSON Editor**: Block-based editor (similar to Scratch/Code.org) with:
     - Fixed JSON syntax (brackets, quotes, colons)
     - Editable key and value fields
@@ -42,7 +44,7 @@ A full-stack application for managing arbitrary JSON configuration data with a R
     - Add/remove fields dynamically
 - **Raw JSON Editor**: Traditional textarea for advanced users
 - **CRUD Operations**: Create, read, update, and delete settings
-- **Pagination**: Navigate through settings with Previous/Next buttons
+- **Pagination**: Navigate through settings with Previous/Next buttons. Automatically returns to previous page when deleting the last item on a page.
 - **Success/Error Messages**: Clear feedback with HTTP status codes
 
 ### Input Validation
@@ -51,6 +53,7 @@ The Visual Editor validates input in real-time:
 - **Number type**: Shows "Not a number!" error if letters are entered
 - **JSON type**: Shows "Invalid JSON!" error if syntax is wrong
 - **Create/Update buttons**: Disabled until all validation errors are fixed
+- **Search field**: Validates UUID format before making API calls
 
 ## API Endpoints
 
@@ -65,8 +68,10 @@ The Visual Editor validates input in real-time:
 ### Pagination
 
 The `GET /settings` endpoint supports pagination:
-- `page`: Page number (default: 1)
-- `limit`: Items per page (default: 5)
+- `page`: Page number (default: 1, minimum: 1)
+- `limit`: Items per page (default: 5, minimum: 1)
+
+Invalid values (e.g., negative numbers) are automatically corrected to minimum values.
 
 Example: `GET /settings?page=2&limit=5`
 
@@ -81,7 +86,7 @@ curl -X POST http://localhost:3001/settings \
 
 **Get All Settings:**
 ```bash
-curl http://localhost:3001/settings?page=1&limit=10
+curl http://localhost:3001/settings?page=1&limit=5
 ```
 
 **Get One Setting:**
@@ -112,6 +117,7 @@ curl -X DELETE http://localhost:3001/settings/<id>
 - Simple limit/offset pagination
 - Returns total count and total pages for UI navigation
 - Default: 5 items per page
+- Handles invalid parameters gracefully (negative values default to 1)
 
 ### API Design
 - RESTful conventions followed
@@ -131,6 +137,56 @@ curl -X DELETE http://localhost:3001/settings/<id>
 - HTTP status codes displayed to users (e.g., "Error 404: Settings not found")
 - Input validation errors shown inline
 - Success messages auto-clear after 5 seconds
+- UUID format validation prevents invalid API calls
+
+## Testing
+
+Both frontend and backend include automated tests using Vitest.
+
+### Run Backend Tests
+
+```bash
+cd backend
+npm install
+npm test
+```
+
+Backend tests cover:
+- POST /settings - Creating new settings
+- GET /settings - Pagination and invalid parameter handling
+- GET /settings/:id - Found and 404 cases
+- PUT /settings/:id - Update and 404 cases
+- DELETE /settings/:id - Idempotent behavior
+- Health check endpoint
+
+### Run Frontend Tests
+
+```bash
+cd frontend
+npm install
+npm test
+```
+
+Frontend tests cover:
+- JsonBuilder component rendering
+- Adding and removing fields
+- Input validation (number type validation)
+- Type selection changes
+- JSON output generation
+
+### Watch Mode
+
+Run tests in watch mode for development:
+
+```bash
+# Backend
+cd backend
+npm run test:watch
+
+# Frontend
+cd frontend
+npm run test:watch
+```
 
 ## Development
 
@@ -167,4 +223,4 @@ proxy: {
 2. **GET one setting**: `GET http://localhost:3001/settings/{id}`
 3. **POST create**: `POST http://localhost:3001/settings` with JSON body
 4. **PUT update**: `PUT http://localhost:3001/settings/{id}` with JSON body
-5. **DELETE**: `DELETE http://localhost:3001/settings/{id}`# Setting-Management
+5. **DELETE**: `DELETE http://localhost:3001/settings/{id}`

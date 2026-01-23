@@ -21,8 +21,7 @@ function App() {
   // State Management
   // Settings list and pagination
   const [settings, setSettings] = useState([]);
-  const [pagination, setPagination] = useState({
-                                                 page: 1, totalPages: 1});
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
 
   // Editor state
   const [jsonInput, setJsonInput] = useState('{\n  "key": "value"\n}');
@@ -98,12 +97,23 @@ function App() {
    * Searches for a settings object by ID
    * GET /settings/{uid}
    *
-   * Displays HTTP 404 error if not found
+   * Displays HTTP 404 error if not found.
+   * Validates input to prevent invalid API calls with special characters.
    */
   const handleSearch = async () => {
+    const trimmedId = searchId.trim();
+
     // Validate input
-    if (!searchId.trim()) {
+    if (!trimmedId) {
       setSearchError('Please enter an ID');
+      return;
+    }
+
+    // Validate UUID format - reject special characters that would break the URL
+    // UUID format: 8-4-4-4-12 hexadecimal characters with hyphens
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(trimmedId)) {
+      setSearchError('Invalid ID format. Please enter a valid UUID (e.g., 3bd79...)');
       return;
     }
 
@@ -111,11 +121,11 @@ function App() {
     setSearchResult(null);
 
     try {
-      const res = await fetch(`${API_URL}/${searchId.trim()}`);
+      const res = await fetch(`${API_URL}/${encodeURIComponent(trimmedId)}`);
 
       // Handle 404 Not Found - display to user
       if (res.status === 404) {
-        setSearchError(`Error 404: Settings with ID "${searchId}" not found`);
+        setSearchError(`Error 404: Settings with ID "${trimmedId}" not found`);
         return;
       }
 
@@ -155,9 +165,9 @@ function App() {
 
       if (res.ok) {
         const data = await res.json();
-        setJsonInput('{\n  "key": "value"\n}');
+        setJsonInput('{\n  "key": "value"\n}');  // Reset editor
         setSuccess(`Created successfully! ID: ${data.id}`);
-        fetchSettings(pagination.page);
+        fetchSettings(pagination.page);          // Refresh list
       }
     } catch (err) {
       setError('Failed to create settings');
@@ -188,7 +198,8 @@ function App() {
 
       // Handle 404 - item may have been deleted
       if (res.status === 404) {
-        setError(`Error 404: Settings with ID "${editingId}" not found. It may have been deleted.`);
+        setError(`Error 404: Settings with ID "${editingId}" not found. 
+                        It may have been deleted.`);
         setEditingId(null);
         setJsonInput('{\n  "key": "value"\n}');
         fetchSettings(pagination.page);
@@ -217,6 +228,8 @@ function App() {
    *
    * Shows confirmation dialog before deleting.
    * Also clears search result if the deleted item was displayed.
+   * Handles pagination edge case: if deleting the last item on a page,
+   * navigates back to the previous page.
    *
    * @param {string} id - UUID of the settings to delete
    */
@@ -237,7 +250,17 @@ function App() {
         setSearchId('');
       }
 
-      fetchSettings(pagination.page);  // Refresh list
+      // Handle pagination edge case:
+      // If on page > 1 and this is the only item on the current page,
+      // go back to the previous page
+      const isLastItemOnPage = settings.length === 1;
+      const isNotFirstPage = pagination.page > 1;
+
+      if (isLastItemOnPage && isNotFirstPage) {
+        fetchSettings(pagination.page - 1);
+      } else {
+        fetchSettings(pagination.page);
+      }
     } catch (err) {
       setError('Failed to delete settings');
     }
@@ -295,10 +318,10 @@ function App() {
             )}
           </div>
 
-          {/* Search error message */}
+          {/* Search error message (e.g., 404 Not Found) */}
           {searchError && (
               <div className="error">
-                <strong>⚠️ {searchError}</strong>
+                <strong> {searchError}</strong>
               </div>
           )}
 
@@ -354,7 +377,7 @@ function App() {
           </div>
 
           {/* Error and success messages */}
-          {error && <div className="error"><strong>⚠️ {error}</strong></div>}
+          {error && <div className="error"><strong> {error}</strong></div>}
           {success && <div className="success"><strong>✓ {success}</strong></div>}
 
           {/* Conditional rendering: Visual editor or Raw textarea */}
@@ -376,7 +399,7 @@ function App() {
 
           {/* Show validation error for raw mode */}
           {editorMode === 'raw' && !validateJson(jsonInput) && jsonInput && (
-              <div className="error"><strong>⚠️ Invalid JSON format</strong></div>
+              <div className="error"><strong> Invalid JSON format</strong></div>
           )}
 
           {/* Action buttons */}
@@ -408,7 +431,7 @@ function App() {
           </div>
         </div>
 
-        {/* Settings List Section */}
+        {/*  Settings List Section */}
         <div className="list-section">
           <h2>All Settings (Page {pagination.page} of {pagination.totalPages})</h2>
           <p className="total-count">Total: {pagination.total || 0} items</p>

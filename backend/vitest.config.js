@@ -1,0 +1,15 @@
+/**
+ * Vitest Configuration for Backend Tests
+ */
+
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+                              test: {
+                                environment: 'node',
+                                env: {
+                                  NODE_ENV: 'test'
+                                },
+                                testTimeout: 10000
+                              }
+                            });
