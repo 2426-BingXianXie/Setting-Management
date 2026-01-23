@@ -84,6 +84,7 @@ describe('Settings API', () => {
           .get('/settings?page=1&limit=5')
           .expect(200);
 
+
       expect(page1.body.data.length).toBe(5);
       expect(page1.body.pagination.page).toBe(1);
       expect(page1.body.pagination.total).toBe(6);
@@ -221,7 +222,80 @@ describe('Settings API', () => {
     });
   });
 
-  //  Health Check
+  // Parameter Validation
+  describe('Parameter Validation', () => {
+    it('should handle empty body in POST request', async () => {
+      const response = await request(app)
+          .post('/settings')
+          .send({})
+          .expect(201);
+
+      // Should create with empty object
+      expect(response.body.data).toEqual({});
+    });
+
+    it('should handle null values in JSON body', async () => {
+      const response = await request(app)
+          .post('/settings')
+          .send({ key: null, nested: { value: null } })
+          .expect(201);
+
+      expect(response.body.data.key).toBeNull();
+      expect(response.body.data.nested.value).toBeNull();
+    });
+
+    it('should handle various data types in JSON body', async () => {
+      const mixedData = {
+        string: 'text',
+        number: 42,
+        float: 3.14,
+        boolean: true,
+        array: [1, 'two', false],
+        object: { nested: 'value' },
+        nullValue: null
+      };
+
+      const response = await request(app)
+          .post('/settings')
+          .send(mixedData)
+          .expect(201);
+
+      expect(response.body.data).toEqual(mixedData);
+    });
+
+    it('should handle non-integer pagination parameters', async () => {
+      const response = await request(app)
+          .get('/settings?page=1.5&limit=2.9')
+          .expect(200);
+
+      // parseInt should truncate to integers
+      expect(response.body.pagination.page).toBe(1);
+      expect(response.body.pagination.limit).toBe(2);
+    });
+
+    it('should handle string pagination parameters', async () => {
+      const response = await request(app)
+          .get('/settings?page=abc&limit=xyz')
+          .expect(200);
+
+      // Default to 1 and 5
+      expect(response.body.pagination.page).toBe(1);
+      expect(response.body.pagination.limit).toBe(5);
+    });
+
+    it('should handle special characters in ID parameter', async () => {
+      // Return 404, not crash
+      await request(app)
+          .get('/settings/not-a-valid-uuid')
+          .expect(404);
+
+      await request(app)
+          .get('/settings/12345')
+          .expect(404);
+    });
+  });
+
+  // Health Check
   describe('GET /health', () => {
     it('should return status ok', async () => {
       const response = await request(app)
